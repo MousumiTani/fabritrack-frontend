@@ -41,90 +41,73 @@ const Login = () => {
   };
 
   return (
-    <div className="h-[90vh] flex ">
-      <div className="hidden md:flex w-1/2 relative bg-gradient-to-br from-blue-700/70  to-purple-500/60">
-        <video
-          autoPlay
-          loop
-          muted
-          className="w-full h-full object-cover mix-blend-overlay"
-        >
-          <source src="/videos/movie2.mp4" type="video/mp4" />
-        </video>
+    <section className="min-h-[90vh] flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8">
+        <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-6">
+          Login
+        </h2>
 
-        <div className="absolute bottom-10 left-10 text-white">
-          <h1 className="text-4xl font-bold drop-shadow-lg">Welcome Back!</h1>
-          <p className="mt-3 text-lg opacity-90">
-            Log in to continue your journey.
-          </p>
-        </div>
-      </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            required
+            placeholder="Enter your email"
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-400 outline-none dark:bg-gray-700 dark:border-gray-600"
+          />
 
-      <div className="w-full md:w-1/2 flex items-center justify-center p-6 bg-purple-200 dark:bg-gray-700">
-        <div className="w-full max-w-md">
-          <h2 className="text-3xl font-semibold mb-4 text-gray-800">Login</h2>
-
-          <form onSubmit={handleSubmit} className="space-y-6 mb-4">
+          <div className="relative">
             <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type={showPass ? "text" : "password"}
               required
-              className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-purple-300 outline-none"
-              placeholder="Enter your email"
+              placeholder="Enter your password"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-400 outline-none pr-10 dark:bg-gray-700 dark:border-gray-600"
             />
-            <div className="relative">
-              <input
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                type={showPass ? "text" : "password"}
-                required
-                className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-purple-300 outline-none"
-                placeholder="Enter your password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPass(!showPass)}
-                className="absolute right-3 top-3 text-gray-600"
-              >
-                {showPass ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
-              </button>
-            </div>
-
-            <Button
-              type="submit"
-              variant="secondary"
-              size="lg"
-              className="w-full"
+            <button
+              type="button"
+              onClick={() => setShowPass(!showPass)}
+              className="absolute right-3 top-2.5 text-gray-500 hover:text-purple-600"
             >
-              Login
-            </Button>
-          </form>
+              {showPass ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+            </button>
+          </div>
 
-          <Button
-            onClick={handleGoogle}
-            variant="secondary"
-            size="lg"
-            className="w-full"
-          >
-            Sign in with Google
+          <Button type="submit" variant="primary" size="lg" className="w-full">
+            Login
           </Button>
+        </form>
 
-          <p className="text-center text-sm text-gray-400 mt-4">
-            No account?
-            <Link to="/register" className="text-purple-600 font-medium ml-1">
-              Register
-            </Link>
-          </p>
+        <div className="my-4 text-center text-gray-400 text-sm">OR</div>
 
-          <p className="text-center mt-2">
-            <Link to="" className="text-purple-600 text-sm">
-              Forgot Password?
-            </Link>
-          </p>
-        </div>
+        <Button
+          onClick={handleGoogle}
+          variant="primary"
+          size="lg"
+          className="w-full"
+        >
+          Sign in with Google
+        </Button>
+
+        <p className="text-center text-sm text-gray-500 mt-6">
+          No account?
+          <Link
+            to="/register"
+            className="text-gray-500 font-bold mx-2 hover:underline"
+          >
+            Register
+          </Link>
+        </p>
+
+        <p className="text-center mt-2">
+          <Link to="" className="text-purple-600 text-sm">
+            Forgot Password?
+          </Link>
+        </p>
       </div>
-    </div>
+    </section>
   );
 };
 

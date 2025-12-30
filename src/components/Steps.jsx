@@ -4,42 +4,42 @@ const STEPS = [
   {
     title: "Order Intake",
     text: `Receive buyer PO, upload tech pack & size specs. Create order in FabriTrack, assign order ID and deadlines.`,
-    video: "https://www.youtube.com/embed/VIDEO_ID_1",
+    video: "",
   },
   {
     title: "Tech Pack & Planning",
     text: `Upload tech pack, create production plan and break order into batches with timings for each stage.`,
-    video: "https://www.youtube.com/embed/VIDEO_ID_2",
+    video: "",
   },
   {
     title: "Material Procurement & Inventory",
     text: `Check inventory, create procurement for shortages, receive and scan materials into stock reserved for the order.`,
-    video: "https://www.youtube.com/embed/VIDEO_ID_3",
+    video: "",
   },
   {
     title: "Cutting",
     text: `Generate marker/cutting lists, log cutting output and material used. System updates inventory and yield reports.`,
-    video: "https://www.youtube.com/embed/VIDEO_ID_4",
+    video: "",
   },
   {
     title: "Sewing (Assembly)",
     text: `Move bundles to sewing lines, log progress per bundle, track WIP and operator performance, flag defects.`,
-    video: "https://www.youtube.com/embed/VIDEO_ID_5",
+    video: "",
   },
   {
     title: "Quality Control",
     text: `In-line and final QC checks recorded with pass/fail and reasons; failed items are routed for rework.`,
-    video: "https://www.youtube.com/embed/VIDEO_ID_6",
+    video: "",
   },
   {
     title: "Finishing & Packing",
     text: `Trim, press and pack garments; print packing lists and labels; record cartons and quantities.`,
-    video: "https://www.youtube.com/embed/VIDEO_ID_7",
+    video: "",
   },
   {
     title: "Dispatch & Reporting",
     text: `Create shipment, mark dispatched, update order status; review OEE, yield, delivery performance.`,
-    video: "https://www.youtube.com/embed/VIDEO_ID_8",
+    video: "",
   },
 ];
 

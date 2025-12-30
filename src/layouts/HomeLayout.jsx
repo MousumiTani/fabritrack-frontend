@@ -4,6 +4,7 @@ import Banner from "../components/Home/Banner";
 import Feedback from "../components/Home/Feedback";
 import WhyChooseUs from "../components/Home/WhyChooseUs";
 import Faq from "../components/Home/Faq";
+import OurProducts from "../components/Home/OurProducts";
 
 import { useEffect } from "react";
 
@@ -14,6 +15,7 @@ const HomeLayout = () => {
   return (
     <div className="min-h-screen ">
       <Banner></Banner>
+      <OurProducts></OurProducts>
       <Feedback></Feedback>
       <Steps></Steps>
       <WhyChooseUs></WhyChooseUs>

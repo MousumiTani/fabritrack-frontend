@@ -32,7 +32,7 @@ const Banner = () => {
             <h2 className="text-2xl md:text-4xl font-bold mb-4">
               New Collection
             </h2>
-            <Link to="/shop">
+            <Link to="/all-products">
               <button className="px-6 py-3 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition">
                 Shop Now
               </button>
@@ -53,7 +53,7 @@ const Banner = () => {
             <h2 className="text-2xl md:text-4xl font-bold mb-4">
               Exclusive Designs
             </h2>
-            <Link to="/collections">
+            <Link to="/all-products">
               <button className="px-6 py-3 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition">
                 Explore
               </button>
@@ -72,9 +72,9 @@ const Banner = () => {
         <div className="absolute inset-0 bg-black/40 flex items-end p-12 justify-center">
           <div className="text-center text-white px-4">
             <h2 className="text-2xl md:text-4xl font-bold mb-4">Summer Sale</h2>
-            <Link to="/offers">
+            <Link to="/all-products">
               <button className="px-6 py-3 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition">
-                View Offers
+                Shop Now
               </button>
             </Link>
           </div>

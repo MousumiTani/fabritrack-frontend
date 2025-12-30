@@ -1,38 +1,48 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import AuthContext from "../context/AuthContext";
 import { useNavigate, Link } from "react-router";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import Button from "../components/Button";
+import { useForm } from "react-hook-form";
+import { imageUpload } from "../utils"; // 🔹 IMPORT
 
 const Register = () => {
-  const { register, googleLogin } = useContext(AuthContext);
+  const { register: registerUser, googleLogin } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [showPass, setShowPass] = useState(false);
 
   useEffect(() => {
     document.title = "Register";
   }, []);
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [photoURL, setPhotoURL] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPass, setShowPass] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm();
 
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!passwordRegex.test(password)) {
-      toast.error("Password must be >=6, include uppercase & lowercase");
-      return;
-    }
+  const onSubmit = async (data) => {
     try {
-      await register(email, password, name, photoURL);
+      // 🔹 get file from react-hook-form
+      const imageFile = data.photo[0];
+
+      // 🔹 upload using utils
+      const imageUrl = await imageUpload(imageFile);
+
+      if (!imageUrl) {
+        throw new Error("Image upload failed");
+      }
+
+      // 🔹 register user
+      await registerUser(data.email, data.password, data.name, imageUrl);
+
       toast.success("Registration successful");
       navigate("/");
     } catch (err) {
-      toast.error("Registration failed: " + err.message);
+      toast.error(err.message || "Registration failed");
     }
   };
 
@@ -43,39 +53,77 @@ const Register = () => {
           Create Account
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Name */}
           <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            {...register("name", { required: "Name is required" })}
             placeholder="Enter your name"
             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-400 outline-none dark:bg-gray-700 dark:border-gray-600"
-            required
           />
+          {errors.name && (
+            <p className="text-red-500 text-sm">{errors.name.message}</p>
+          )}
 
+          {/* Email */}
           <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             type="email"
+            {...register("email", { required: "Email is required" })}
             placeholder="Enter your email"
             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-400 outline-none dark:bg-gray-700 dark:border-gray-600"
-            required
           />
+          {errors.email && (
+            <p className="text-red-500 text-sm">{errors.email.message}</p>
+          )}
 
+          {/* Image file (native, no label) */}
           <input
-            value={photoURL}
-            onChange={(e) => setPhotoURL(e.target.value)}
-            placeholder="Photo URL"
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-400 outline-none dark:bg-gray-700 dark:border-gray-600"
-            required
+            type="file"
+            accept="image/*"
+            {...register("photo", {
+              required: "Profile image is required",
+              validate: {
+                size: (files) =>
+                  files[0]?.size < 2_000_000 || "Image must be under 2MB",
+                type: (files) =>
+                  ["image/jpeg", "image/png", "image/webp"].includes(
+                    files[0]?.type
+                  ) || "Only JPG, PNG, WEBP allowed",
+              },
+            })}
+            className="
+              w-full
+              text-sm font-normal text-gray-500
+              border rounded-lg
+              px-3 py-1.5
+              bg-white dark:bg-gray-700
+              dark:border-gray-600
+              focus:ring-2 focus:ring-purple-400
+              file:mr-3
+              file:px-3 file:py-1.5
+              file:text-sm file:font-normal
+              file:border-0
+              file:bg-gray-100 file:text-gray-600
+              dark:file:bg-gray-600 dark:file:text-gray-200
+            "
           />
+          {errors.photo && (
+            <p className="text-red-500 text-sm">{errors.photo.message}</p>
+          )}
+
+          {/* Password */}
           <div className="relative">
             <input
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               type={showPass ? "text" : "password"}
+              {...register("password", {
+                required: "Password is required",
+                pattern: {
+                  value: passwordRegex,
+                  message:
+                    "Password must be 6+ chars with uppercase & lowercase",
+                },
+              })}
               placeholder="Password"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-400 outline-none pr-10 dark:bg-gray-700 dark:border-gray-600"
-              required
             />
             <button
               type="button"
@@ -85,20 +133,28 @@ const Register = () => {
               {showPass ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
             </button>
 
-            <p className="text-xs text-gray-400 mt-1">
-              At least 6 characters, uppercase & lowercase
-            </p>
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
-          <Button type="submit" variant="primary" size="lg" className="w-full">
-            Register
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            className="w-full"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Registering..." : "Register"}
           </Button>
         </form>
 
         <div className="my-4 text-center text-gray-400 text-sm">OR</div>
 
         <Button
-          onClick={() => googleLogin()}
+          onClick={googleLogin}
           variant="primary"
           size="lg"
           className="w-full"

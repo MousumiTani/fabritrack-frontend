@@ -15,7 +15,7 @@ const Button = ({
     secondary: "bg-[#FFD9B3] text-[#8B5E3C] hover:bg-[#FFC49B]",
     outline:
       "border border-[#8B5E3C] text-[#8B5E3C] hover:bg-[#FFD9B3] hover:text-[#8B5E3C]",
-    danger: "bg-red-500 text-white hover:bg-red-600",
+    neutral: "bg-white text-black hover:bg-gray-600",
   };
 
   const sizes = {

@@ -43,11 +43,9 @@ const reviews = [
 
 const Feedback = () => {
   return (
-    <section className="bg-gray-50 py-14">
+    <section className=" py-14">
       <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl font-semibold text-center mb-10">
-          Customer Reviews
-        </h2>
+        <h2 className="text-center mb-10">Customer Reviews</h2>
 
         <Carousel
           autoPlay
@@ -62,8 +60,8 @@ const Feedback = () => {
         >
           {reviews.map((review) => (
             <div key={review.id} className="px-3">
-              <div className="bg-white border rounded-lg p-6 h-full">
-                <p className="text-gray-700 leading-relaxed mb-4">
+              <div className="bg-white dark:bg-gray-600 border rounded-lg p-6 h-full">
+                <p className="text-gray-700 dark:text-gray-900 mb-4">
                   “{review.feedback}”
                 </p>
                 <p className="font-medium text-gray-900">— {review.name}</p>

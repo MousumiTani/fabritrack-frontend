@@ -1,5 +1,5 @@
 import React from "react";
-import Steps from "../components/Steps";
+import Steps from "../components/Home/Steps";
 import Banner from "../components/Home/Banner";
 import Feedback from "../components/Home/Feedback";
 import WhyChooseUs from "../components/Home/WhyChooseUs";
@@ -16,8 +16,8 @@ const HomeLayout = () => {
     <div className="min-h-screen ">
       <Banner></Banner>
       <OurProducts></OurProducts>
-      <Feedback></Feedback>
       <Steps></Steps>
+      <Feedback></Feedback>
       <WhyChooseUs></WhyChooseUs>
       <Faq></Faq>
     </div>

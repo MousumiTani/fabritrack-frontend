@@ -6,6 +6,12 @@
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
-* {
-  font-family: "Geom", sans-serif;
+@layer base {
+  * {
+    font-family: "Geom", sans-serif;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl mb-4 font-bold text-[#5f4631] dark:text-[#f4ead8];
+  }
 }

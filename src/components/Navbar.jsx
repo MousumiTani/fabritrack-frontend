@@ -33,7 +33,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-[#FFF5E6] dark:bg-[#403530] shadow-md sticky top-0 z-50">
+    <nav className="bg-[#FFF5E6] dark:bg-[#403530] shadow-md sticky top-0 z-50 mb-4">
       <div className="max-w-full px-4 py-3 flex items-center justify-between">
         <Link to="/">
           <div className="flex items-center gap-2">
@@ -44,7 +44,6 @@ const Navbar = () => {
           </div>
         </Link>
 
-        {/*  Menu */}
         <ul className="hidden lg:flex flex-1 justify-center gap-6">
           {links.map((item) => (
             <li key={item.path}>
@@ -75,26 +74,8 @@ const Navbar = () => {
                   className="h-10 w-10 rounded-full cursor-pointer"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                 />
-                {dropdownOpen && (
-                  <div className="absolute right-0 w-40 bg-[#FFD9B3] py-2 z-50 rounded-md shadow-lg">
-                    <Link
-                      to="/profile"
-                      className="block px-4 py-2 text-[#5f4631] hover:bg-[#d3b89a]"
-                      onClick={() => setDropdownOpen(false)}
-                    >
-                      Profile
-                    </Link>
-                    <Link
-                      to="/"
-                      className="block px-4 py-2 text-[#5f4631] hover:bg-[#d3b89a]"
-                      onClick={() => setDropdownOpen(false)}
-                    >
-                      Settings
-                    </Link>
-                  </div>
-                )}
               </div>
-              <Button variant="outline" size="sm" onClick={logout}>
+              <Button variant="outline" size="md" onClick={logout}>
                 Logout
               </Button>
             </>
@@ -114,7 +95,7 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Menu */}
+        {/* For Mobile */}
         <div className="lg:hidden flex items-center gap-x-4">
           <ThemeToggle checked={theme === "dark"} onChange={handleTheme} />
 

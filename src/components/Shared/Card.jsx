@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import Button from "../Button";
 
 const Card = ({ product }) => {
   const {
@@ -20,26 +21,23 @@ const Card = ({ product }) => {
       />
 
       <h3 className="text-lg font-semibold mt-3">{title}</h3>
-
       <p className="text-sm text-gray-500">{category}</p>
-
-      {/* Short desc only for homepage */}
       {description && (
         <p className="text-sm mt-2 text-gray-600">
           {description.slice(0, 80)}...
         </p>
       )}
 
-      <p className="font-bold text-lg mt-2">৳ {price}</p>
+      <p className="font-bold text-lg mt-2">$ {price}</p>
 
       {availableQuantity !== undefined && (
-        <p className="text-sm">Available: {availableQuantity}</p>
+        <p className="text-sm mb-2">Available: {availableQuantity}</p>
       )}
 
       <Link to={`/product/${_id}`}>
-        <button className="mt-4 w-full bg-black text-white py-2 rounded hover:bg-gray-800">
+        <Button variant="primary" size="full">
           View Details
-        </button>
+        </Button>
       </Link>
     </div>
   );

@@ -41,32 +41,28 @@ const Faq = () => {
   };
 
   return (
-    <section className="py-16 bg-gray-900">
-      <div className="max-w-4xl mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl font-semibold text-center text-white mb-10">
-          Frequently Asked Questions
-        </h2>
+    <section className="max-w-4xl mx-auto px-4">
+      <h2 className="my-12 text-center">Frequently Asked Questions</h2>
 
-        <div className="space-y-4">
-          {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden"
+      <div className="space-y-4">
+        {faqs.map((faq, index) => (
+          <div
+            key={index}
+            className="bg-[#8B5E3C] dark:bg-gray-800  rounded-lg overflow-hidden"
+          >
+            <button
+              onClick={() => toggleIndex(index)}
+              className="w-full flex justify-between items-center px-6 py-4 text-left text-white focus:outline-none"
             >
-              <button
-                onClick={() => toggleIndex(index)}
-                className="w-full flex justify-between items-center px-6 py-4 text-left text-white focus:outline-none"
-              >
-                <span>{faq.question}</span>
-                {openIndex === index ? <FiMinus /> : <FiPlus />}
-              </button>
+              <span>{faq.question}</span>
+              {openIndex === index ? <FiMinus /> : <FiPlus />}
+            </button>
 
-              {openIndex === index && (
-                <div className="px-6 pb-4 text-gray-300">{faq.answer}</div>
-              )}
-            </div>
-          ))}
-        </div>
+            {openIndex === index && (
+              <div className="px-6 pb-4 text-gray-300">{faq.answer}</div>
+            )}
+          </div>
+        ))}
       </div>
     </section>
   );

@@ -1,30 +1,37 @@
-import { BsFillHouseAddFill } from "react-icons/bs";
-import { MdHomeWork, MdOutlineManageHistory } from "react-icons/md";
+import {
+  FiPlusSquare,
+  FiEdit,
+  FiClock,
+  FiCheckCircle,
+  FiUser,
+} from "react-icons/fi";
+
 import MenuItem from "./MenuItem";
+
 const ManagerMenu = () => {
   return (
     <>
-      <MenuItem
-        icon={BsFillHouseAddFill}
-        label="Add Product"
-        address="add-product"
-      />
+      <MenuItem icon={FiPlusSquare} label="Add Product" address="add-product" />
 
       <MenuItem
-        icon={MdOutlineManageHistory}
+        icon={FiEdit}
         label="Manage Products"
         address="manage-products"
       />
+
       <MenuItem
-        icon={BsFillHouseAddFill}
+        icon={FiClock}
         label="Pending Orders"
         address="pending-orders"
       />
+
       <MenuItem
-        icon={BsFillHouseAddFill}
+        icon={FiCheckCircle}
         label="Approved Orders"
         address="approved-orders"
       />
+
+      <MenuItem icon={FiUser} label="My Profile" address="profile" />
     </>
   );
 };

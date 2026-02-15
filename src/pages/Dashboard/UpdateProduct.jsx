@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import axios from "axios";
+import axiosSecure from "../../api/axiosSecure"; // secure axios
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { imageUpload } from "../../utils";
@@ -18,24 +18,36 @@ const UpdateProduct = () => {
     formState: { isSubmitting },
   } = useForm();
 
-  // Load existing product
+  /* =============================
+        LOAD EXISTING PRODUCT
+  ============================= */
   useEffect(() => {
-    axios.get(`http://localhost:5000/products/${id}`).then((res) => {
-      const p = res.data;
+    const loadProduct = async () => {
+      try {
+        const res = await axiosSecure.get(`/products/${id}`);
+        const p = res.data;
 
-      setValue("title", p.title);
-      setValue("description", p.description);
-      setValue("price", p.price);
-      setValue("category", p.category);
-      setValue("demoVideo", p.demoVideo);
-      setValue("paymentOption", p.paymentOption);
-      setValue("showOnHome", p.showOnHome);
+        setValue("title", p.title);
+        setValue("description", p.description);
+        setValue("price", p.price);
+        setValue("category", p.category);
+        setValue("demoVideo", p.demoVideo);
+        setValue("paymentOption", p.paymentOption || []);
+        setValue("showOnHome", p.showOnHome);
 
-      setExistingImages(p.images || []);
-    });
+        setExistingImages(p.images || []);
+      } catch (err) {
+        toast.error("Failed to load product");
+        console.error(err);
+      }
+    };
+
+    loadProduct();
   }, [id, setValue]);
 
-  // Submit update
+  /* =============================
+          SUBMIT UPDATE
+  ============================= */
   const onSubmit = async (data) => {
     try {
       let images = existingImages;
@@ -56,14 +68,16 @@ const UpdateProduct = () => {
         category: data.category,
         images,
         demoVideo: data.demoVideo || "",
-        paymentOption: data.paymentOption,
+        paymentOption: Array.isArray(data.paymentOption)
+          ? data.paymentOption
+          : [data.paymentOption],
         showOnHome: data.showOnHome || false,
       };
 
-      await axios.patch(`http://localhost:5000/products/${id}`, updatedProduct);
+      await axiosSecure.patch(`/products/${id}`, updatedProduct);
 
       toast.success("Product updated successfully!");
-      navigate("/dashboard/all-products");
+      navigate("/dashboard/manage-products");
     } catch (err) {
       toast.error("Update failed");
       console.error(err);
@@ -96,16 +110,21 @@ const UpdateProduct = () => {
         />
 
         <select {...register("category")} className="w-full border p-2 rounded">
-          <option value="Shirt">Shirt</option>
-          <option value="Pant">Pant</option>
-          <option value="Jacket">Jacket</option>
-          <option value="Accessories">Accessories</option>
+          <option value="Gents Item">Gents Item</option>
+          <option value="Ladies Attire">Ladies Attire</option>
+          <option value="Kids Specials">Kids Specials</option>
+          <option value="Exclusive">Exclusive</option>
         </select>
 
         {/* Existing Images */}
         <div className="flex gap-2 flex-wrap">
           {existingImages.map((img, i) => (
-            <img key={i} src={img} className="w-20 h-20 object-cover rounded" />
+            <img
+              key={i}
+              src={img}
+              alt="product"
+              className="w-20 h-20 object-cover rounded"
+            />
           ))}
         </div>
 
@@ -118,14 +137,14 @@ const UpdateProduct = () => {
           className="w-full border p-2 rounded"
         />
 
-        {/* Payment Options (multiple) */}
+        {/* Payment Options (MULTIPLE SELECT) */}
         <select
           multiple
           {...register("paymentOption")}
           className="w-full border p-2 rounded"
         >
-          <option value="Cash on Delivery">Cash on Delivery</option>
-          <option value="PayFirst">PayFirst</option>
+          <option value="Cash On Delivery">Cash On Delivery</option>
+          <option value="Pay First">Pay First</option>
         </select>
 
         {/* Show on Home */}

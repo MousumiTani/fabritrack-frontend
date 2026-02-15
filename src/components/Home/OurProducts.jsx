@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosSecure from "../../api/axiosSecure"; // ✅ import your secure axios
 import Card from "../../components/Shared/Card";
 
 const OurProducts = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/products/home")
-      .then((res) => setProducts(res.data));
+    const fetchProducts = async () => {
+      try {
+        const res = await axiosSecure.get("/products/home"); // ✅ secure request
+        setProducts(res.data);
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   return (

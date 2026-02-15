@@ -5,7 +5,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 const reviews = [
   {
     id: 1,
-    name: "Ayesha Rahman",
+    name: "Arnob Rahman",
     feedback:
       "The fabric quality exceeded my expectations. Stitching and finishing were perfect. I’m very satisfied with my purchase.",
   },
@@ -17,7 +17,7 @@ const reviews = [
   },
   {
     id: 3,
-    name: "Farzana Islam",
+    name: "Jawad Islam",
     feedback:
       "Beautiful outfits at a reasonable price. Delivery was on time and packaging was neat.",
   },
@@ -43,33 +43,33 @@ const reviews = [
 
 const Feedback = () => {
   return (
-    <section className=" py-14">
-      <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-center mb-10">Customer Reviews</h2>
+    <section className="max-w-6xl mx-auto px-4 py-14">
+      <h2 className="text-center mb-10">Customer Feedback</h2>
 
-        <Carousel
-          autoPlay
-          infiniteLoop
-          interval={4500}
-          stopOnHover={false}
-          showThumbs={false}
-          showStatus={false}
-          swipeable
-          centerMode
-          centerSlidePercentage={90}
-        >
-          {reviews.map((review) => (
-            <div key={review.id} className="px-3">
-              <div className="bg-white dark:bg-gray-600 border rounded-lg p-6 h-full">
-                <p className="text-gray-700 dark:text-gray-900 mb-4">
-                  “{review.feedback}”
-                </p>
-                <p className="font-medium text-gray-900">— {review.name}</p>
-              </div>
+      <Carousel
+        autoPlay
+        infiniteLoop
+        interval={4500}
+        stopOnHover={false}
+        showThumbs={false}
+        showStatus={false}
+        swipeable
+        centerMode
+        centerSlidePercentage={90}
+      >
+        {reviews.map((review) => (
+          <div key={review.id} className="px-2">
+            <div className="bg-white dark:bg-[#403530] border rounded-lg p-8 h-full">
+              <p className="text-gray-700 dark:text-[#f4ead8] mb-4">
+                “{review.feedback}”
+              </p>
+              <p className="font-medium text-gray-900 dark:text-[#f4ead8]">
+                — {review.name}
+              </p>
             </div>
-          ))}
-        </Carousel>
-      </div>
+          </div>
+        ))}
+      </Carousel>
     </section>
   );
 };

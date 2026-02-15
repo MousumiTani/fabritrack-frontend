@@ -1,34 +1,50 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
+import axiosSecure from "../../../api/axiosSecure";
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/users");
-        setUsers(Array.isArray(res.data) ? res.data : []);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+  const fetchUsers = async () => {
+    try {
+      const res = await axiosSecure.get("/users");
+      setUsers(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    }
+  };
 
+  useEffect(() => {
     fetchUsers();
   }, []);
 
-  const updateUser = async (id, data) => {
+  const updateUserStatus = async (id, action) => {
     try {
-      await axios.patch(`http://localhost:5000/users/${id}`, data);
+      let data = {};
+      if (action === "approve") {
+        data = { status: "active" }; // Approve → active
+      } else if (action === "suspend") {
+        const { value: reason } = await Swal.fire({
+          title: "Suspend User",
+          input: "textarea",
+          inputLabel: "Reason for suspension",
+          inputPlaceholder: "Type your reason here...",
+          showCancelButton: true,
+        });
+        if (!reason) return; // Cancelled or empty
+        data = { status: "suspended", suspendReason: reason };
+      }
 
-      // re-fetch users after update
-      const res = await axios.get("http://localhost:5000/users");
-      setUsers(Array.isArray(res.data) ? res.data : []);
-
-      Swal.fire("Updated!", "User updated successfully", "success");
+      await axiosSecure.patch(`/users/status/${id}`, data);
+      fetchUsers(); // refresh table
+      Swal.fire(
+        "Success",
+        `User ${action === "approve" ? "approved" : "suspended"} successfully`,
+        "success",
+      );
     } catch (err) {
-      console.error(err);
+      console.error("Error updating user status:", err);
+      Swal.fire("Error", "Failed to update user", "error");
     }
   };
 
@@ -38,7 +54,7 @@ const ManageUsers = () => {
 
       <div className="overflow-x-auto">
         <table className="w-full border">
-          <thead className="bg-gray-100">
+          <thead>
             <tr>
               <th className="border p-2">Name</th>
               <th className="border p-2">Email</th>
@@ -57,30 +73,24 @@ const ManageUsers = () => {
                 <td className="border p-2 capitalize">{u.status}</td>
 
                 <td className="border p-2 space-x-2">
-                  {/* Role toggle */}
                   <button
-                    onClick={() =>
-                      updateUser(u._id, {
-                        role: u.role === "admin" ? "user" : "admin",
-                      })
-                    }
-                    className="px-3 py-1 bg-blue-500 text-white rounded"
+                    onClick={() => updateUserStatus(u._id, "approve")}
+                    className={`px-3 py-1 rounded ${
+                      u.status === "active" ? "bg-gray-400" : "bg-green-500"
+                    } text-white`}
+                    disabled={u.status === "active"} // disabled once active
                   >
-                    {u.role === "admin" ? "Make User" : "Make Admin"}
+                    {u.status === "active" ? "Approved" : "Approve"}
                   </button>
 
-                  {/* Suspend / Approve */}
                   <button
-                    onClick={() =>
-                      updateUser(u._id, {
-                        status: u.status === "active" ? "suspended" : "active",
-                      })
-                    }
-                    className={`px-3 py-1 text-white rounded ${
-                      u.status === "active" ? "bg-red-500" : "bg-green-500"
-                    }`}
+                    onClick={() => updateUserStatus(u._id, "suspend")}
+                    className={`px-3 py-1 rounded ${
+                      u.status === "suspended" ? "bg-gray-400" : "bg-red-500"
+                    } text-white`}
+                    disabled={u.status === "suspended"} // disabled once suspended
                   >
-                    {u.status === "active" ? "Suspend" : "Approve"}
+                    {u.status === "suspended" ? "Suspended" : "Suspend"}
                   </button>
                 </td>
               </tr>

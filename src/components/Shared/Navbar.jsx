@@ -1,13 +1,15 @@
 import React, { useState, useContext, useEffect } from "react";
-import { NavLink, Link } from "react-router";
-import AuthContext from "../context/AuthContext";
+import { NavLink, Link, useNavigate } from "react-router";
+import AuthContext from "../../context/AuthContext";
 import { HiMenu, HiX } from "react-icons/hi";
 import Button from "./Button";
 import ThemeToggle from "./ThemeToggle";
-import logo from "../assets/logo.png";
+import logo from "../../assets/logo.png";
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -31,6 +33,11 @@ const Navbar = () => {
           { name: "Contact", path: "/contact" },
         ]),
   ];
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login", { replace: true });
+  };
 
   return (
     <nav className="bg-[#FFF5E6] dark:bg-[#403530] shadow-md sticky top-0 z-50 mb-4">
@@ -75,7 +82,7 @@ const Navbar = () => {
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                 />
               </div>
-              <Button variant="outline" size="md" onClick={logout}>
+              <Button variant="outline" size="md" onClick={handleLogout}>
                 Logout
               </Button>
             </>
@@ -151,7 +158,7 @@ const Navbar = () => {
               variant="outline"
               size="md"
               onClick={() => {
-                logout();
+                handleLogout();
                 toggleSidebar();
               }}
             >

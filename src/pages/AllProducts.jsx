@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosSecure from "../api/axiosSecure";
+
 import Card from "../components/Shared/Card";
 
 const AllProducts = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/products")
-      .then((res) => setProducts(res.data));
+    axiosSecure
+      .get("/products")
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.error(err));
   }, []);
 
   return (

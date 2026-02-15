@@ -1,16 +1,12 @@
-import { BsFingerprint } from "react-icons/bs";
-import { GrUserAdmin } from "react-icons/gr";
+import { FiShoppingBag, FiTruck, FiUser } from "react-icons/fi";
 import MenuItem from "./MenuItem";
 
 const BuyerMenu = () => {
   return (
     <>
-      <MenuItem icon={BsFingerprint} label="My Orders" address="my-orders" />
-      <MenuItem
-        icon={BsFingerprint}
-        label="Track Order"
-        address="track-order"
-      />
+      <MenuItem icon={FiShoppingBag} label="My Orders" address="my-orders" />
+
+      <MenuItem icon={FiUser} label="My Profile" address="profile" />
     </>
   );
 };

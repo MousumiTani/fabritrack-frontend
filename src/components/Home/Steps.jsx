@@ -62,7 +62,6 @@ const StepCard = ({ step, index }) => {
             isEven ? "md:flex-row-reverse" : ""
           } gap-6 items-stretch`}
         >
-          {/* Video */}
           <div className="md:w-1/2 h-[320px] md:h-[360px] rounded-md overflow-hidden border border-[#D9BFA7] dark:border-[#5f4631]">
             <video
               src={step.video}
@@ -74,7 +73,6 @@ const StepCard = ({ step, index }) => {
             />
           </div>
 
-          {/* Text */}
           <div className="md:w-1/2 h-[320px] md:h-[360px] flex">
             <div className="flex flex-col justify-center w-full p-6 rounded-md border border-[#D9BFA7] dark:border-[#5f4631] bg-white/70 dark:bg-black/30">
               <h3 className="text-xl font-semibold mb-3 text-[#5f4631] dark:text-[#f4ead8]">

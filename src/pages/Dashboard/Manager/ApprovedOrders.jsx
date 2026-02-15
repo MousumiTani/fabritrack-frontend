@@ -1,67 +1,64 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import Swal from "sweetalert2";
+import axiosSecure from "../../../api/axiosSecure"; // ✅ secure axios
 
-const ApprovedOrders = () => {
+import { toast } from "react-toastify";
+
+const ApprovedOrder = () => {
   const [orders, setOrders] = useState([]);
+  const [trackingOrder, setTrackingOrder] = useState(null);
+  const [trackingForm, setTrackingForm] = useState({
+    status: "",
+    location: "",
+    note: "",
+    time: "",
+  });
 
-  // Fetch approved orders
-  const fetchApprovedOrders = async () => {
+  // Fetch confirmed orders
+  const fetchOrders = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/orders");
-      // Only approved orders
-      const approvedOrders = res.data.filter(
-        (o) => o.orderStatus === "approved"
-      );
-      setOrders(approvedOrders);
+      const res = await axiosSecure.get("/orders"); // secure axios
+      setOrders(res.data.filter((o) => o.orderStatus === "confirmed"));
     } catch (err) {
       console.error("Error fetching approved orders:", err);
-      Swal.fire("Error", "Failed to fetch approved orders", "error");
+      toast.error("Failed to fetch approved orders");
     }
   };
 
   useEffect(() => {
-    fetchApprovedOrders();
+    fetchOrders();
   }, []);
 
-  // Add tracking info
-  const addTracking = async (orderId) => {
-    const { value: tracking } = await Swal.fire({
-      title: "Add Tracking Info",
-      html:
-        `<input id="location" class="swal2-input" placeholder="Location">` +
-        `<input id="status" class="swal2-input" placeholder="Status">` +
-        `<textarea id="note" class="swal2-textarea" placeholder="Note"></textarea>`,
-      focusConfirm: false,
-      preConfirm: () => ({
-        location: document.getElementById("location").value,
-        status: document.getElementById("status").value,
-        note: document.getElementById("note").value,
-        timestamp: new Date(),
-      }),
-    });
+  const openTrackingModal = (order) => {
+    setTrackingOrder(order);
+    setTrackingForm({ status: "", location: "", note: "", time: "" });
+  };
 
-    if (!tracking) return;
+  const handleTrackingChange = (e) => {
+    setTrackingForm({ ...trackingForm, [e.target.name]: e.target.value });
+  };
 
+  const submitTracking = async () => {
+    if (!trackingOrder) return;
     try {
-      // You need a 'tracking' array in your order document
-      await axios.patch(`http://localhost:5000/orders/${orderId}`, {
-        $push: { tracking: tracking },
-      });
-      Swal.fire("Added!", "Tracking info added successfully", "success");
-      fetchApprovedOrders();
+      await axiosSecure.patch(
+        `/orders/tracking/${trackingOrder._id}`,
+        trackingForm,
+      );
+      toast.success("Tracking updated!");
+      setTrackingOrder(null);
+      fetchOrders(); // refresh orders after update
     } catch (err) {
       console.error(err);
-      Swal.fire("Error", "Failed to add tracking info", "error");
+      toast.error("Failed to add tracking");
     }
   };
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Approved Orders</h2>
+      <h2 className="mb-4 text-2xl font-bold">Approved Orders</h2>
       <div className="overflow-x-auto">
         <table className="w-full border">
-          <thead className="bg-gray-100 text-center">
+          <thead>
             <tr>
               <th className="border p-2">Order ID</th>
               <th className="border p-2">User</th>
@@ -76,47 +73,25 @@ const ApprovedOrders = () => {
               orders.map((o) => (
                 <tr key={o._id} className="text-center">
                   <td className="border p-2">{o._id.slice(0, 6)}...</td>
-                  <td className="border p-2">{o.userEmail}</td>
+                  <td className="border p-2">{o.buyerName}</td>
                   <td className="border p-2">{o.productTitle}</td>
                   <td className="border p-2">{o.quantity}</td>
                   <td className="border p-2">
-                    {new Date(o.approvedAt || o.createdAt).toLocaleDateString()}
+                    {new Date(o.approvedAt).toLocaleString()}
                   </td>
-                  <td className="border p-2 space-x-2">
+                  <td className="border p-2">
                     <button
-                      onClick={() => addTracking(o._id)}
-                      className="px-3 py-1 bg-purple-500 text-white rounded"
+                      className="px-3 py-1 bg-green-500 text-white rounded"
+                      onClick={() => openTrackingModal(o)}
                     >
                       Add Tracking
-                    </button>
-                    <button
-                      onClick={() =>
-                        Swal.fire({
-                          title: "Tracking Timeline",
-                          html:
-                            o.tracking
-                              ?.map(
-                                (t, i) =>
-                                  `<p><strong>${t.status}</strong> at ${
-                                    t.location
-                                  } on ${new Date(
-                                    t.timestamp
-                                  ).toLocaleString()}<br/>${t.note || ""}</p>`
-                              )
-                              .join("<hr/>") || "No tracking info",
-                          width: 600,
-                        })
-                      }
-                      className="px-3 py-1 bg-blue-500 text-white rounded"
-                    >
-                      View Tracking
                     </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="p-4 text-gray-500 text-center">
+                <td colSpan="6" className="p-4 text-gray-500">
                   No approved orders
                 </td>
               </tr>
@@ -124,8 +99,70 @@ const ApprovedOrders = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Tracking Modal */}
+      {trackingOrder && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white dark:bg-gray-700 p-6 rounded w-96">
+            <h3 className="font-bold mb-4">
+              Add Tracking for {trackingOrder.productTitle}
+            </h3>
+            <select
+              name="status"
+              value={trackingForm.status}
+              onChange={handleTrackingChange}
+              className="border p-2 w-full mb-2"
+            >
+              <option value="">Select Status</option>
+              <option value="Cutting Completed">Cutting Completed</option>
+              <option value="Sewing Started">Sewing Started</option>
+              <option value="Finishing">Finishing</option>
+              <option value="QC Checked">QC Checked</option>
+              <option value="Packed">Packed</option>
+              <option value="Shipped / Out for Delivery">
+                Shipped / Out for Delivery
+              </option>
+            </select>
+            <input
+              name="location"
+              placeholder="Location"
+              value={trackingForm.location}
+              onChange={handleTrackingChange}
+              className="border p-2 w-full mb-2"
+            />
+            <input
+              name="note"
+              placeholder="Note"
+              value={trackingForm.note}
+              onChange={handleTrackingChange}
+              className="border p-2 w-full mb-2"
+            />
+            <input
+              name="time"
+              type="datetime-local"
+              value={trackingForm.time}
+              onChange={handleTrackingChange}
+              className="border p-2 w-full mb-2"
+            />
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setTrackingOrder(null)}
+                className="px-3 py-1 bg-gray-500 text-white rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitTracking}
+                className="px-3 py-1 bg-blue-500 text-white rounded"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default ApprovedOrders;
+export default ApprovedOrder;

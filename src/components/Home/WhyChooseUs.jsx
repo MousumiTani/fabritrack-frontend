@@ -24,7 +24,7 @@ const WhyChooseUs = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.3 }}
           transition={{ duration: 0.6 }}
-          className="text-2xl md:text-3xl font-semibold text-center mb-10"
+          className="text-center mb-10"
         >
           Why Choose Us
         </motion.h2>

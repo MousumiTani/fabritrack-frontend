@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import AuthContext from "../../context/AuthContext";
 import { useNavigate } from "react-router";
-import Button from "../../components/Button";
+import Button from "../../components/Shared/Button";
 
 const Profile = () => {
   const { user, logout } = useContext(AuthContext);
@@ -37,18 +37,12 @@ const Profile = () => {
             )}
           </div>
 
-          {/* Name */}
           <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-1">
             {user.displayName || "Unnamed User"}
           </h2>
 
           {/* Email */}
           <p className="text-gray-500 dark:text-gray-300 mb-2">{user.email}</p>
-
-          {/* Role */}
-          <span className="px-3 py-1 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-700 dark:text-white text-sm mb-4">
-            {user.role || "Buyer"}
-          </span>
 
           {/* Logout Button */}
           <Button
@@ -59,27 +53,6 @@ const Profile = () => {
           >
             Logout
           </Button>
-
-          {/* Role-based extra info */}
-          <div className="w-full text-left">
-            {user.role === "buyer" && (
-              <div className="text-gray-600 dark:text-gray-300">
-                <p>Orders: {/* fetch from context or api */}0</p>
-                <p>Wishlist: {/* fetch */}0 items</p>
-              </div>
-            )}
-            {user.role === "manager" && (
-              <div className="text-gray-600 dark:text-gray-300">
-                <p>Shop Name: {/* fetch */}My Shop</p>
-                <p>Products Managed: {/* fetch */}0</p>
-              </div>
-            )}
-            {user.role === "admin" && (
-              <div className="text-gray-600 dark:text-gray-300">
-                <p>Admin Permissions: Full Access</p>
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </section>

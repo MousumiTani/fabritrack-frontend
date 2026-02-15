@@ -6,7 +6,7 @@ import AuthProvider from "./context/AuthProvider";
 import "./index.css";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-import BackToTop from "./components/BackToTop";
+import BackToTop from "./components/Shared/BackToTop";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

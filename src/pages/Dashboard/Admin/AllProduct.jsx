@@ -1,126 +1,108 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosSecure from "../../../api/axiosSecure";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router";
 
 const AllProduct = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  // Fetch all products
   const fetchProducts = async () => {
     try {
-      setLoading(true);
-      const res = await axios.get("http://localhost:5000/products");
-      setProducts(res.data || []);
+      const res = await axiosSecure.get("/products");
+      setProducts(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error fetching products:", err);
-    } finally {
-      setLoading(false);
     }
   };
+
+
+
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
-  // Toggle Show on Home
-  const handleToggleHome = async (id, currentValue) => {
-    try {
-      await axios.patch(`http://localhost:5000/products/${id}`, {
-        showOnHome: !currentValue,
-      });
-      fetchProducts();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // Delete product
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: "Are you sure?",
-      text: "This product will be permanently deleted!",
+      text: "This will permanently delete the product!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#000",
       confirmButtonText: "Yes, delete it!",
     });
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:5000/products/${id}`);
-        fetchProducts();
+        await axiosSecure.delete(`/products/${id}`);
         Swal.fire("Deleted!", "Product has been deleted.", "success");
+        fetchProducts();
       } catch (err) {
-        console.error(err);
-        Swal.fire("Error!", "Failed to delete product.", "error");
+        console.error("Delete error:", err);
+        Swal.fire(
+          "Error",
+          err.response?.data?.message || "Failed to delete product",
+          "error",
+        );
       }
     }
   };
 
-  if (loading) {
-    return <p className="text-center mt-10">Loading products...</p>;
-  }
+  const toggleShowOnHome = async (id, current) => {
+    try {
+      await axiosSecure.patch(`/products/show-home/${id}`, {
+        showOnHome: !current,
+      });
+      fetchProducts();
+    } catch (err) {
+      console.error("Error updating showOnHome:", err);
+    }
+  };
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">All Products (Admin)</h2>
-
+      <h2 className="text-2xl font-bold mb-6">All Products</h2>
       <div className="overflow-x-auto">
         <table className="w-full border">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-2 border">Image</th>
-              <th className="p-2 border">Product Name</th>
-              <th className="p-2 border">Price</th>
-              <th className="p-2 border">Category</th>
-              <th className="p-2 border">Created By</th>
-              <th className="p-2 border">Show on Home</th>
-              <th className="p-2 border">Actions</th>
+          <thead>
+            <tr className="text-center">
+              <th className="border p-2">Image</th>
+              <th className="border p-2">Product Name</th>
+              <th className="border p-2">Price</th>
+              <th className="border p-2">Category</th>
+              <th className="border p-2">Created By</th>
+              <th className="border p-2">Show on Home</th>
+              <th className="border p-2">Actions</th>
             </tr>
           </thead>
 
           <tbody>
             {products.map((p) => (
               <tr key={p._id} className="text-center">
-                <td className="p-2 border">
-                  <img
-                    src={p.images?.[0]}
-                    alt={p.title}
-                    className="w-14 h-14 object-cover mx-auto rounded"
-                  />
+                <td className="border p-2">
+                  {p.images ? (
+                    <img
+                      src={p.images}
+                      alt={p.title}
+                      className="w-16 h-16 object-cover mx-auto"
+                    />
+                  ) : (
+                    "No Image"
+                  )}
                 </td>
-
-                <td className="p-2 border">{p.title}</td>
-                <td className="p-2 border">৳ {p.price}</td>
-                <td className="p-2 border">{p.category}</td>
-                <td className="p-2 border">{p.createdBy?.slice(0, 8)}...</td>
-
-                {/* Show on Home Toggle */}
-                <td className="p-2 border">
+                <td className="border p-2">{p.title}</td>
+                <td className="border p-2">${p.price}</td>
+                <td className="border p-2 capitalize">{p.category}</td>
+                <td className="border p-2">{p.createdBy}</td>
+                <td className="border p-2">
                   <input
                     type="checkbox"
-                    checked={p.showOnHome}
-                    onChange={() => handleToggleHome(p._id, p.showOnHome)}
+                    checked={p.showOnHome || false}
+                    onChange={() => toggleShowOnHome(p._id, p.showOnHome)}
                   />
                 </td>
-
-                {/* Actions */}
-                <td className="p-2 border space-x-2">
+                <td className="border p-2">
                   <button
-                    className="px-3 py-1 bg-blue-500 text-white rounded"
-                    onClick={() =>
-                      navigate(`/dashboard/update-product/${p._id}`)
-                    }
-                  >
-                    Update
-                  </button>
-
-                  <button
-                    className="px-3 py-1 bg-red-500 text-white rounded"
                     onClick={() => handleDelete(p._id)}
+                    className="px-3 py-1 bg-red-500 text-white rounded"
                   >
                     Delete
                   </button>

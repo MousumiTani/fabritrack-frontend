@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router";
+import axiosSecure from "../../../api/axiosSecure";
 
 const AllOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -11,7 +11,7 @@ const AllOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/orders");
+        const res = await axiosSecure.get("/orders");
         setOrders(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Error fetching orders:", err);
@@ -21,7 +21,6 @@ const AllOrders = () => {
     fetchOrders();
   }, []);
 
-  // Filter + Search
   const filteredOrders = orders.filter((o) => {
     const statusMatch =
       statusFilter === "all" ? true : o.orderStatus === statusFilter;
@@ -35,11 +34,11 @@ const AllOrders = () => {
 
   const updateStatus = async (id, status) => {
     try {
-      await axios.patch(`http://localhost:5000/orders/${id}`, {
+      await axiosSecure.patch(`/orders/${id}`, {
         orderStatus: status,
       });
-      // Refetch orders after update
-      const res = await axios.get("http://localhost:5000/orders");
+
+      const res = await axiosSecure.get("/orders");
       setOrders(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error updating order:", err);
@@ -75,13 +74,13 @@ const AllOrders = () => {
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full border">
-          <thead className="bg-gray-100">
+          <thead>
             <tr>
               <th className="border p-2">Order ID</th>
               <th className="border p-2">User</th>
               <th className="border p-2">Product</th>
-              <th className="border p-2">Qty</th>
-              <th className="border p-2">Total</th>
+              <th className="border p-2">Quantity</th>
+
               <th className="border p-2">Status</th>
               <th className="border p-2">Actions</th>
             </tr>
@@ -94,7 +93,7 @@ const AllOrders = () => {
                 <td className="border p-2">{o.userEmail}</td>
                 <td className="border p-2">{o.productTitle}</td>
                 <td className="border p-2">{o.quantity}</td>
-                <td className="border p-2">৳ {o.totalPrice}</td>
+
                 <td className="border p-2 capitalize">{o.orderStatus}</td>
 
                 <td className="border p-2 space-x-2">
@@ -104,24 +103,6 @@ const AllOrders = () => {
                   >
                     View
                   </button>
-
-                  {o.orderStatus === "pending" && (
-                    <>
-                      <button
-                        onClick={() => updateStatus(o._id, "approved")}
-                        className="px-3 py-1 bg-green-500 text-white rounded"
-                      >
-                        Approve
-                      </button>
-
-                      <button
-                        onClick={() => updateStatus(o._id, "rejected")}
-                        className="px-3 py-1 bg-red-500 text-white rounded"
-                      >
-                        Reject
-                      </button>
-                    </>
-                  )}
                 </td>
               </tr>
             ))}

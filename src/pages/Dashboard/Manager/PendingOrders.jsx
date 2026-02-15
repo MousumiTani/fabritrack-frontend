@@ -1,31 +1,34 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router";
+import axiosSecure from "../../../api/axiosSecure"; // ✅ secure axios
 
 const PendingOrders = () => {
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
 
-  const fetchPendingOrders = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/orders/pending");
-      setOrders(Array.isArray(res.data) ? res.data : []);
-    } catch (err) {
-      console.error("Error fetching pending orders:", err);
-      Swal.fire("Error", "Failed to fetch pending orders", "error");
-    }
-  };
-
   useEffect(() => {
-    fetchPendingOrders();
+    // ✅ fetch orders safely inside useEffect
+    const fetchOrders = async () => {
+      try {
+        const res = await axiosSecure.get("/orders/pending"); // manager-only route
+        setOrders(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        console.error("Error fetching pending orders:", err);
+        Swal.fire("Error", "Failed to fetch pending orders", "error");
+      }
+    };
+
+    fetchOrders();
   }, []);
 
   const approveOrder = async (id) => {
     try {
-      await axios.patch(`http://localhost:5000/orders/approve/${id}`);
+      await axiosSecure.patch(`/orders/approve/${id}`);
       Swal.fire("Approved!", "Order has been approved.", "success");
-      fetchPendingOrders();
+      // refresh orders
+      const res = await axiosSecure.get("/orders/pending");
+      setOrders(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(err);
       Swal.fire("Error", "Failed to approve order", "error");
@@ -45,9 +48,11 @@ const PendingOrders = () => {
     if (!result.isConfirmed) return;
 
     try {
-      await axios.patch(`http://localhost:5000/orders/reject/${id}`);
+      await axiosSecure.patch(`/orders/reject/${id}`);
       Swal.fire("Rejected!", "Order has been rejected.", "success");
-      fetchPendingOrders();
+      // refresh orders
+      const res = await axiosSecure.get("/orders/pending");
+      setOrders(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(err);
       Swal.fire("Error", "Failed to reject order", "error");
@@ -58,8 +63,8 @@ const PendingOrders = () => {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-6">Pending Orders</h2>
       <div className="overflow-x-auto">
-        <table className="w-full border">
-          <thead className="bg-gray-100 text-center">
+        <table className="w-full border text-center">
+          <thead>
             <tr>
               <th className="border p-2">Order ID</th>
               <th className="border p-2">User</th>
@@ -72,7 +77,7 @@ const PendingOrders = () => {
           <tbody>
             {orders.length > 0 ? (
               orders.map((o) => (
-                <tr key={o._id} className="text-center">
+                <tr key={o._id}>
                   <td className="border p-2">{o._id.slice(0, 6)}...</td>
                   <td className="border p-2">{o.userEmail}</td>
                   <td className="border p-2">{o.productTitle}</td>
@@ -104,7 +109,7 @@ const PendingOrders = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="p-4 text-gray-500 text-center">
+                <td colSpan="6" className="p-4 text-gray-500">
                   No pending orders
                 </td>
               </tr>

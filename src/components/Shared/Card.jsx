@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import Button from "../Button";
+import Button from "./Button";
 
 const Card = ({ product }) => {
   const {
@@ -13,7 +13,7 @@ const Card = ({ product }) => {
   } = product;
 
   return (
-    <div className="border rounded-lg shadow hover:shadow-lg transition p-4">
+    <div className="shadow hover:shadow-lg transition p-4">
       <img
         src={images?.[0]}
         alt={name}

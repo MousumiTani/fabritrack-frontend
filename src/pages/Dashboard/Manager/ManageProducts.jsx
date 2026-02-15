@@ -1,105 +1,133 @@
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { Link } from "react-router";
+import { useNavigate } from "react-router";
+import axiosSecure from "../../../api/axiosSecure"; // ✅ secure axios
 
 const ManageProducts = () => {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
-  // Fetch products
+  // Fetch manager products
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      // ✅ use backend route GET /products
+      const res = await axiosSecure.get("/products");
+      setProducts(res.data || []);
+    } catch (err) {
+      console.error("Error fetching products:", err);
+      Swal.fire("Error", "Failed to fetch products", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetch("http://localhost:5000/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
+    fetchProducts();
   }, []);
 
   // Delete product
-  const handleDelete = (id) => {
-    Swal.fire({
+  const handleDelete = async (p) => {
+    const result = await Swal.fire({
       title: "Are you sure?",
-      text: "This product will be deleted!",
+      text: "This product will be permanently deleted!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      confirmButtonText: "Delete",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        fetch(`http://localhost:5000/products/${id}`, {
-          method: "DELETE",
-        })
-          .then((res) => res.json())
-          .then(() => {
-            setProducts(products.filter((p) => p._id !== id));
-            Swal.fire("Deleted!", "Product has been deleted.", "success");
-          });
-      }
+      confirmButtonColor: "#000",
+      confirmButtonText: "Yes, delete it!",
     });
+
+    if (result.isConfirmed) {
+      try {
+        await axiosSecure.delete(`/products/${p._id}`); // ✅ secure delete
+        fetchProducts();
+        Swal.fire("Deleted!", "Product has been deleted.", "success");
+      } catch (err) {
+        console.error(err);
+        Swal.fire("Error!", "Failed to delete product.", "error");
+      }
+    }
   };
 
-  // Search filter
-  const filteredProducts = products.filter((product) => {
-    const title = product?.title?.toLowerCase() || "";
-    const category = product?.category?.toLowerCase() || "";
-    const query = search.toLowerCase();
+  // Filter products by name or category
+  const filteredProducts = products.filter(
+    (p) =>
+      p.title.toLowerCase().includes(search.toLowerCase()) ||
+      p.category.toLowerCase().includes(search.toLowerCase()),
+  );
 
-    return title.includes(query) || category.includes(query);
-  });
+  if (loading) return <p className="text-center mt-10">Loading products...</p>;
 
   return (
-    <div>
+    <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Manage Products</h2>
 
-      {/* Search */}
       <input
         type="text"
         placeholder="Search by name or category"
-        className="input input-bordered w-full max-w-md mb-4"
+        className="border p-2 mb-4 w-full"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      {/* Table */}
       <div className="overflow-x-auto">
-        <table className="table">
+        <table className="w-full border">
           <thead>
             <tr>
-              <th>Image</th>
-              <th>Name</th>
-              <th>Price</th>
-              <th>Payment Mode</th>
-              <th>Actions</th>
+              <th className="p-2 border">Image</th>
+              <th className="p-2 border">Name</th>
+              <th className="p-2 border">Price</th>
+              <th className="p-2 border">Payment Mode</th>
+              <th className="p-2 border">Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            {filteredProducts.map((product) => (
-              <tr key={product._id}>
-                <td>
+            {filteredProducts.map((p) => (
+              <tr key={p._id} className="text-center">
+                <td className="p-2 border">
                   <img
-                    src={product.images?.[0]}
-                    alt=""
-                    className="w-12 h-12 rounded object-cover"
+                    src={p.images?.[0]}
+                    alt={p.title}
+                    className="w-14 h-14 object-cover mx-auto rounded"
                   />
                 </td>
-                <td>{product.title}</td>
-                <td>${product.price}</td>
-                <td>{product.paymentMode}</td>
-                <td className="space-x-2">
-                  <Link
-                    to={`/dashboard/update-product/${product._id}`}
-                    className="btn btn-sm btn-info"
+                <td className="p-2 border">{p.title}</td>
+                <td className="p-2 border">$ {p.price}</td>
+                <td className="p-2 border">
+                  {Array.isArray(p.paymentOption)
+                    ? p.paymentOption.join(", ")
+                    : p.paymentOption || "-"}
+                </td>
+
+                <td className="p-2 border space-x-2">
+                  <button
+                    className="px-3 py-1 bg-blue-500 text-white rounded"
+                    onClick={() =>
+                      navigate(`/dashboard/update-product/${p._id}`)
+                    }
                   >
                     Update
-                  </Link>
+                  </button>
                   <button
-                    onClick={() => handleDelete(product._id)}
-                    className="btn btn-sm btn-error"
+                    className="px-3 py-1 bg-red-500 text-white rounded"
+                    onClick={() => handleDelete(p)}
                   >
                     Delete
                   </button>
                 </td>
               </tr>
             ))}
+
+            {filteredProducts.length === 0 && (
+              <tr>
+                <td colSpan="5" className="p-4 text-center text-gray-500">
+                  No products found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

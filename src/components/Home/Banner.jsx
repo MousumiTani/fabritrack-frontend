@@ -2,7 +2,7 @@ import React from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Link } from "react-router";
-import Button from "../Button";
+import Button from "../Shared/Button";
 
 import bannerImg1 from "../../assets/banner1.jpg";
 import bannerImg2 from "../../assets/banner2.jpg";

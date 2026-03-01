@@ -22,7 +22,7 @@ const OrderDetails = () => {
     fetchOrder();
   }, [id]);
 
-  if (loading) return <p className="p-6">Loading order details...</p>;
+  if (loading) return <p className="p-6">Loading Order Details...</p>;
   if (!order) return <p className="p-6 text-red-500">Order not found</p>;
 
   return (

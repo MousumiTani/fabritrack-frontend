@@ -1,5 +1,15 @@
 # Garments Order & Production Tracker System
 
+**Admin**
+Email: admin@gmail.com
+Password: FabriTrackAdmin34
+**Manager**
+Email: manager1@gmail.com
+Password: ManagerOne
+**Buyer**
+Email:buyer4@gmail.com
+Password:BuyerFour
+
 ## Project Overview
 
 The **Garments Order & Production Tracker System** is a **web-based platform** built to streamline production management for small and medium-sized garment factories. The system provides a centralized interface for managing **orders, production stages, inventory, and delivery timelines**, helping factories improve efficiency, reduce errors, and ensure timely deliveries.

@@ -19,7 +19,8 @@ const ProductDetails = () => {
       .catch((err) => console.error(err));
   }, [id]);
 
-  if (!product) return <p className="text-center mt-10">Loading...</p>;
+  if (!product)
+    return <p className="text-center mt-10">Loading Product Details...</p>;
 
   const {
     title,

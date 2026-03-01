@@ -29,7 +29,7 @@ const slides = [
 const Banner = () => {
   const overlay =
     "absolute inset-0 bg-black/40 flex items-end justify-center p-12";
-  const imgClass = "max-h-[500px] w-full object-cover";
+  const imgClass = "max-h-[600px] w-full object-cover";
 
   return (
     <Carousel

@@ -14,12 +14,12 @@ import OrderForm from "../pages/OrderForm";
 import Payment from "../pages/Payment";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
-
-// Dashboard common
 import Profile from "../pages/Dashboard/Profile";
 
 // Buyer
 import MyOrders from "../pages/Dashboard/Buyer/MyOrders";
+import Overview from "../pages/Dashboard/Buyer/Overview";
+import Settings from "../pages/Dashboard/Buyer/Settings";
 
 // Manager
 import AddProduct from "../pages/Dashboard/Manager/AddProduct";
@@ -34,7 +34,6 @@ import AllOrders from "../pages/Dashboard/Admin/AllOrders";
 import AllProduct from "../pages/Dashboard/Admin/AllProduct";
 import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
 
-// Route guards
 import PrivateRoute from "./PrivateRoute";
 import BuyerRoute from "./BuyerRoute";
 import ManagerRoute from "./ManagerRoute";
@@ -77,7 +76,7 @@ const Router = createBrowserRouter([
         ),
       },
 
-      // 🔐 DASHBOARD
+      //dashboard
       {
         path: "/dashboard",
         element: (
@@ -86,7 +85,6 @@ const Router = createBrowserRouter([
           </PrivateRoute>
         ),
         children: [
-          // Common (all logged-in users)
           { path: "profile", element: <Profile /> },
 
           {
@@ -105,8 +103,24 @@ const Router = createBrowserRouter([
               </BuyerRoute>
             ),
           },
+          {
+            path: "overview",
+            element: (
+              <BuyerRoute>
+                <Overview />
+              </BuyerRoute>
+            ),
+          },
+          {
+            path: "settings",
+            element: (
+              <BuyerRoute>
+                <Settings />
+              </BuyerRoute>
+            ),
+          },
 
-          // 🧑‍💼 MANAGER ONLY
+          //only manager
           {
             path: "add-product",
             element: (
@@ -148,7 +162,7 @@ const Router = createBrowserRouter([
             ),
           },
 
-          // 👑 ADMIN ONLY
+          //only admin
           {
             path: "all-orders",
             element: (

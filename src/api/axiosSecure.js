@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const API = import.meta.env.VITE_API_URL;
+
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: API, // ✅ this will use the deployed backend URL
 });
 
 axiosSecure.interceptors.request.use((config) => {
